@@ -1,0 +1,7 @@
+These templates were obtained using the Azure Export Templates functionality.
+
+This is known to be a little funky.  
+
+The main infrastructure is what we deploy to Kubernetes and that is what I will focus on putting in code mainly.
+
+These base resources I usually build once, manually.

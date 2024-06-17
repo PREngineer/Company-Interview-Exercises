@@ -1,0 +1,25 @@
+Installing the Azure PowerShell Module
+
+1. Open PowerShell as Administrator
+
+2. Run the following commandlets:
+
+	Set-ExecutionPolicy -ExecutionPolicy Unrestricted
+	Install-Module -Name Az -AllowClobber -Scope CurrentUser
+
+3. Validate that you can connect to Azure now:
+
+	Connect-AzAccount (If not using MFA)
+	Connect-AzAccount -TenantId <your tenant id> (If using MFA)
+	(Enter the Azure Credentials in the pop up window to log in)
+
+Installing WAMP
+
+1. Download WAMP Server
+2. Run the executable
+
+Installing Docker Desktop
+
+1. Download Docker Desktop
+2. Run the executable
+

@@ -1,0 +1,8 @@
+# Create the meetspa Namespace (if not exist)
+
+kind: Namespace
+apiVersion: v1
+metadata:
+ name: helloworld
+ labels:
+   name: helloworld

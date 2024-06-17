@@ -1,0 +1,71 @@
+// Start the Pipeline
+pipeline {
+  // Specify where to run
+  agent any
+  // Start declaring the stages of the pipeline
+  stages { 
+    // Stage #1 - Clone the repository
+    stage('Clone Repository') {
+      steps {
+        git url: 'https://github.com/PREngineer/2BCloud', branch: 'main'
+      }
+    }
+    // Stage #2 - Testing
+    stage('Run PHP Tests') {
+      steps {
+        sh '''
+          echo "Pretending to run PHPUnit Tests and generate Code Coverage";
+          '''
+      }
+    }
+    // Stage #3 - Linting or any code review
+    stage('Code Review Checks') {
+      steps {
+        sh '''
+          echo "Pretending to run Code Review tools";
+          '''
+      }
+    }
+    // Stage #4 - Packaging
+    stage('Creating package + Artifact repository') {
+      steps {
+        sh '''
+          echo "Pretending to zip package and push to Artifact repository";
+          '''
+      }
+    }
+    // Stage #5 - Build container image
+    stage('Kaniko - Build container image') {
+      steps {
+        sh '''
+          echo "Pretending to run build the container image using Kaniko";
+          '''
+      }
+    }
+    // Stage #6 - Scanning image
+    stage('Scanning image') {
+      steps {
+        sh '''
+          echo "Pretending to scan image with Docker Scout or any other tool";
+          '''
+      }
+    }
+    // Stage #7 - Remove previous deployment (if applicable)
+    stage('Remove previous deployment') {
+      steps {
+        sh '''
+          echo "Pretending to remove previous infrastructure";
+        '''
+      }
+    }
+    // Stage #8 - Deploy to Kubernetes
+    stage('Deploy to Minikube') {
+      steps {
+        sh '''
+          kubectl apply --validate=false -f CD/namespace.yaml
+          kubectl apply --validate=false -f CD
+        '''
+      }
+    }
+  }
+}

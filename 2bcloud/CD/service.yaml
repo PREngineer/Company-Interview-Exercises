@@ -1,0 +1,16 @@
+# Create the Exposed App Service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld-service
+  namespace: helloworld
+spec:
+  type: LoadBalancer
+  selector:
+    app: helloworld
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80

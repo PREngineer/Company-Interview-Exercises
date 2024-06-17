@@ -1,0 +1,46 @@
+#------------------------------------------------------------------------------
+# Server root folder www .htaccess
+# This file provides server security limiting access to the localhost only.
+# Comment next four lines to deactivate. (Allows external access)
+#------------------------------------------------------------------------------
+
+#Order Deny,Allow
+#Deny from all
+#Allow from 127.0.0.1
+#Allow from ::1
+
+#------------------------------------------------------------------------------
+# To allow execution of cgi scripts in this directory uncomment next two lines.
+#------------------------------------------------------------------------------
+
+AddHandler cgi-script .pl .cgi
+Options +ExecCGI +FollowSymLinks
+
+#------------------------------------------------------------------------------
+# Activate this section to use the Private Server Feature!
+# Defaults: Username - root; Password - root
+# Note AuthUserFile: File path is relative to server root
+# To lock server, uncomment the next 4 lines. (A name and password is required)
+#------------------------------------------------------------------------------
+
+#AuthName "Uniform Server - Server Access"
+#AuthType Basic
+#AuthUserFile ../../htpasswd/www/.htpasswd
+#Require valid-user
+
+#######################################################
+#         URL REDIRECTION TO USE API-STYLE URLS       #
+#######################################################
+
+# Rewrite all other URLs to index.php/
+RewriteEngine On
+# Set the base directory (if needed)
+RewriteBase /
+# Protect application and system files from being viewed directly
+RewriteRule ^(application|modules|system) - [F,L]
+# Allow existing files or directories to be displayed directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Rewrite URLs to index.php with a query parameter
+# Example: mysite.com/Home/VA -> mysite.com/index.php?url=Home/VA
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

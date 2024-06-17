@@ -1,0 +1,14 @@
+Run the Dockerfile
+
+1. cd into directory
+2. Build using:
+	docker build -t prengineer/theorem1 . -f Dockerfile
+3. Run with Docker to validate it:
+	docker run -it --rm -p 80:80 prengineer/theorem1
+
+
+
+Test the app works.
+
+
+Push to Dockerhub or other registry.

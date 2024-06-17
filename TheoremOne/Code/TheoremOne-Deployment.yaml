@@ -1,0 +1,83 @@
+# Create the Production Namespace (if not exist)
+
+kind: Namespace
+apiVersion: v1
+metadata:
+ name: production
+ labels:
+   name: production
+
+---
+
+# Create the Exposed App Service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: theoremone-external-service
+  namespace: production
+spec:
+  selector:
+    app: theoremone
+  type: LoadBalancer
+  ports:
+  - name: httpport
+    protocol: TCP
+    port: 80
+    targetPort: 80
+status:
+  loadBalancer:
+    ingress:
+    - ip: 10.0.0.1
+
+---
+
+# Create the App Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: theoremone-deployment
+  namespace: production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: theoremone
+  template:
+    metadata:
+      labels:
+        app: theoremone
+    spec:
+    # Specify the container
+      containers:
+        - name: theoremone
+          image: prengineer/theorem1:latest
+          env:
+            - name: TZ
+              value: America/New_York
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "1000m"
+          ports:
+            - name: httpport
+              containerPort: 80
+
+---
+
+# Create a Horizontal Pod Autoscaler (for scalability)
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: theoremone-hpa
+  namespace: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: theoremone-deployment
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 90

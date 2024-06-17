@@ -1,0 +1,79 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2019-06-01",
+        "name": "theo1sample",
+        "location": "eastus2",
+        "sku": {
+            "name": "Standard_LRS",
+            "tier": "Standard"
+        },
+        "kind": "StorageV2",
+        "properties": {
+          "dnsEndpointType": "Standard",
+          "defaultToOAuthAuthentication": false,
+          "publicNetworkAccess": "Enabled",
+          "allowCrossTenantReplication": false,
+          "minimumTlsVersion": "TLS1_2",
+          "allowBlobPublicAccess": true,
+          "allowSharedKeyAccess": true,
+          "networkAcls": {
+            "bypass": "AzureServices",
+            "virtualNetworkRules": [],
+            "ipRules": [],
+            "defaultAction": "Allow"
+          },
+          "supportsHttpsTrafficOnly": true,
+          "encryption": {
+            "requireInfrastructureEncryption": false,
+            "services": {
+              "file": {
+                "keyType": "Account",
+                "enabled": true
+              },
+              "blob": {
+                "keyType": "Account",
+                "enabled": true
+              }
+            },
+            "keySource": "Microsoft.Storage"
+          },
+          "accessTier": "Hot"
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices",
+        "apiVersion": "2018-07-01",
+        "name": "theo1sample/default",
+        "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', 'theo1sample')]"
+        ],
+        "sku": {
+          "name": "Standard_LRS",
+          "tier": "Standard"
+        },
+        "properties": {}
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+        "apiVersion": "2019-06-01",
+        "name": "theo1sample/default/greetings",
+        "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', 'theo1sample', 'default')]",
+        "[resourceId('Microsoft.Storage/storageAccounts', 'theo1sample')]"
+        ],
+        "properties": {
+          "immutableStorageWithVersioning": {
+            "enabled": false
+          },
+          "defaultEncryptionScope": "$account-encryption-key",
+          "denyEncryptionScopeOverride": false,
+          "publicAccess": "Blob"
+        }
+      }
+    ]
+}

@@ -1,0 +1,48 @@
+Create a Kubernetes Cluster
+
+1. Log into the Azure Portal
+2. Search for Kubernetes Service
+3. Click on it
+4. Click on the "+ Create" button" and pick "Create a Kubernetes cluster"
+5. Pick the Azure Subscription
+6. Pick the created Resource Group already created
+7. Under Cluster preset configuration, pick: Dev/Test
+8. Name: theoremcluster
+9. Region: US East 2
+10. Zones: 1,2,3
+11. Pricing tier: Free
+12. Kubernetes version: 1.26.6
+13. Automatic upgrade: Enabled with patch
+14. Node size: B2als v2 (2 cores / 4 RAM)
+15. Scale Method: Autoscale
+16. Node count: 1-2
+17. Click "Review + Create"
+18. Click the "Create" button
+
+Connect to the Kubernetes Cluster:
+
+1. Open the Cloud Shell in the Azure Portal
+2. Type the following command to connect:
+	az aks get-credentials --resource-group TheoremOne-Sample --name theoremcluster
+3. Validate that it connected by running the following command:
+	kubectl get nodes
+
+
+Create the deployment file
+
+
+Deploy the application:
+
+1. In the cloud shell, create a new file using vi that will contain our deployment.
+
+curl <the raw github address of the deployment file> > deployment.yaml
+
+2. Apply the deployment to the cluster:
+
+	kubectl apply -f deployment.yaml
+
+3. Get the public IP of the service:
+
+	kubectl get service
+
+4. Point to the Public IP to test
