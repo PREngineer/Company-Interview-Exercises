@@ -35,6 +35,8 @@ Assessment is organized into 3 files, one for each task.
 
 ## Task 1 - (task1.sh)
 
+Based on the description of the task, it doesn't seem to be related to setting up SMB, NFS, FTP or any similar type of file share.  It just sounds like the request is to create a folder in a shared machine and to make sure that all users have rwx permissions.
+
 This script assumes that the user running the script has permissions to create the folder in the path that they provide.
 
 To run it, the user should SSH in to the machine, copy the file, make it executable, and then execute it.  Example:
@@ -48,6 +50,8 @@ chmod +x task1.sh
 
 ## Task 2 - (task2.py)
 
+Based on the description of the task, it seems that I should only concern myself with the code that is put inside the Lambda function.
+
 This is a Python 3 script that has to be pasted into the Lambda function.
 
 I am assuming that the Lambda function has all the proper permissions/roles and configurations.
@@ -56,9 +60,11 @@ I have put the minimal amount of information since I wasn't provided much.  Assu
 
 ## Task 3 - (task3-Jenkinsfile)
 
-For this task I am assuming that the appropriate permissions exist, I have a bucket to store deployment files named *jorge-deploy-bucket*, and all necessary packages and requirements are installed in the Jenkins server.
+Based on the description of the task, it seems like I should not concern myself with the actual creation of the Pipeline but just provide the code for it.
 
 Given that the naming of the file is not the standard *Jenkinsfile*, the pipeline has to be made aware of the proper file to use if using a repository.  Otherwise, just put it inline.
+
+For this task I am assuming that the appropriate permissions exist, I have a bucket to store deployment files named *jorge-deploy-bucket*, and all necessary packages and requirements are installed in the Jenkins server.
 
 --
 
