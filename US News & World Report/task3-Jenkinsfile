@@ -1,0 +1,99 @@
+pipeline {
+  agent any
+
+  // Define environment variables for this Pipeline
+  environment {
+    AWS_DEFAULT_REGION = 'us-east-1'
+    LAMBDA_FUNCTION_NAME = 'DeployEC2S3Function'
+    CLOUD_FORMATION_STACK_NAME = 'LambdaEC2S3Stack'
+  }
+
+  stages {
+    stage('Clone Repository') {
+      steps {
+        // Example repository to clone
+        git 'https://github.com/PREngineer/Company-Interview-Exercises'
+      }
+    }
+    stage('Package & Upload Lambda Function') {
+      steps {
+        // Run a script that goes into the proper directory, zips the python script and uploads it to an S3 bucket
+        // Assuming I have a bucket for deployments called jorge-deploy-bucket
+        script {
+          sh '''
+          cd "US News & World Report"
+          zip function.zip task2.py
+          aws s3 cp function.zip s3://jorge-deploy-bucket
+          '''
+        }
+      }
+    }
+    stage('Deploy with CloudFormation') {
+      steps {
+        // Define the CloudFormation template to execute
+        script {
+          def cloudFormationTemplate = '''
+          AWSTemplateFormatVersion: '2010-09-09'
+          Resources:
+            LambdaExecutionRole:
+              Type: 'AWS::IAM::Role'
+              Properties:
+                AssumeRolePolicyDocument:
+                  Version: '2012-10-17'
+                  Statement:
+                    - Effect: Allow
+                      Principal:
+                        Service: 'lambda.amazonaws.com'
+                      Action: 'sts:AssumeRole'
+                Policies:
+                  - PolicyName: 'LambdaEC2S3Policy'
+                    PolicyDocument:
+                      Version: '2012-10-17'
+                      Statement:
+                        - Effect: Allow
+                          Action:
+                            - 'ec2:RunInstances'
+                            - 'ec2:DescribeImages'
+                            - 's3:CreateBucket'
+                            - 's3:PutObject'
+                          Resource: '*'
+            DeployEC2S3Function:
+              Type: 'AWS::Lambda::Function'
+              Properties:
+                Handler: 'lambda_function.lambda_handler'
+                Role: !GetAtt LambdaExecutionRole.Arn
+                Code:
+                  S3Bucket: 'jorge-deploy-bucket'
+                  S3Key: 'function.zip'
+                Runtime: 'python3.10'
+                Timeout: 300
+            CloudWatchEventRule:
+              Type: 'AWS::Events::Rule'
+              Properties:
+                ScheduleExpression: 'cron(0 9 ? * MON *)'
+                Targets:
+                  - Arn: !GetAtt DeployEC2S3Function.Arn
+                    Id: 'TargetFunction'
+            PermissionForEventsToInvokeLambda: 
+              Type: 'AWS::Lambda::Permission' 
+              Properties: 
+                FunctionName: !Ref DeployEC2S3Function 
+                Action: 'lambda:InvokeFunction' 
+                Principal: 'events.amazonaws.com' 
+            ''' 
+            
+            // Write as a YAML file
+            writeFile file: 'cloudformation_template.yaml', text: cloudFormationTemplate 
+            
+            // Trigger execution of YAML file
+            sh ''' 
+            aws cloudformation deploy \ 
+              --template-file cloudformation_template.yaml \ 
+              --stack-name ${CLOUD_FORMATION_STACK_NAME} \ 
+              --capabilities CAPABILITY_NAMED_IAM 
+            ''' 
+        } 
+      } 
+    } 
+  } 
+}
